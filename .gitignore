@@ -3,3 +3,5 @@
 ################################################################################
 
 /.vs/k8s.samples/v16
+/K8s.Samples.User.Api/obj
+/K8s.Samples.User.Api/bin/Debug/netcoreapp2.2
