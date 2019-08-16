@@ -4,7 +4,7 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
-COPY ["K8s.Samples.User.Api/K8s.Samples.User.Api.csproj", "K8s.Samples.User.Api/"]
+COPY ["K8s.Samples.User.Api.csproj", "K8s.Samples.User.Api/"]
 RUN dotnet restore "K8s.Samples.User.Api/K8s.Samples.User.Api.csproj"
 COPY . .
 WORKDIR "/src/K8s.Samples.User.Api"
