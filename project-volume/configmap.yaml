@@ -60,16 +60,16 @@ metadata:
   namespace: netcore
 data:
   appsettings: | 
-  {
-  "Logging": {
-    "LogLevel": {
-      "Default": "Warning"
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": "Warning"
+        }
+      },
+      "AllowedHosts": "www.neobai.com",
+      "QQ": {
+        "AppId": "5434454",
+        "AppSecret": "sfsdmkwe"
+      }
     }
-  },
-  "AllowedHosts": "www.neobai.com",
-  "QQ": {
-    "AppId": "5434454",
-    "AppSecret": "sfsdmkwe"
-  }
-  }
 
