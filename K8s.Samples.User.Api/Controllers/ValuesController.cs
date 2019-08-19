@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace K8s.Samples.User.Api.Controllers
 {
@@ -12,14 +13,17 @@ namespace K8s.Samples.User.Api.Controllers
     public class ValuesController : ControllerBase
     {
         private readonly string _secretPath = "";
+        private readonly IConfiguration _configuration;
 
-        public ValuesController()
+        public ValuesController(IConfiguration configuration)
         {
             _secretPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "secret");
             if(!Directory.Exists(_secretPath))
             {
                 Directory.CreateDirectory(_secretPath);
             }
+
+            _configuration = configuration;
         }
 
         [HttpGet("index")]
@@ -53,7 +57,7 @@ namespace K8s.Samples.User.Api.Controllers
             {
                 return Ok("user 文件中的内容为空");
             }
-            secretUser = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(secretUser));
+            //secretUser = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(secretUser));
 
             string secretPwd = "";
             using(var fs = new StreamReader(pwdFile))
@@ -65,7 +69,7 @@ namespace K8s.Samples.User.Api.Controllers
             {
                 return Ok("pwd 文件中的内容为空");
             }
-            secretPwd = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(secretPwd));
+            //secretPwd = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(secretPwd));
 
 
             if (secretUser.Equals(user) && secretPwd.Equals(pwd))
@@ -75,6 +79,25 @@ namespace K8s.Samples.User.Api.Controllers
             else
             {
                 return Ok("login fail");
+            }
+        }
+
+        [HttpGet("settings")]
+        public IActionResult GetSettings(string key)
+        {
+            if(string.IsNullOrWhiteSpace(key))
+            {
+                return Ok("参数key的值不能为空");
+            }
+
+            var section = _configuration.GetSection(key);
+            if(section.Exists())
+            {
+                return Ok(section.AsEnumerable());
+            }
+            else
+            {
+                return Ok("不存在的key");
             }
         }
     }

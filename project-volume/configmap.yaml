@@ -1,0 +1,75 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: user-api
+  namespace: netcore
+  labels:
+    name: user-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: user-api
+  template:
+    metadata:
+      labels:
+        name: user-api
+    spec:
+      containers:
+      - name: user-api
+        image: registry.cn-hangzhou.aliyuncs.com/shz/k8s.samples.user.api:1.0.2
+        
+        # 指定容器需要挂载的目录文件
+        volumeMounts:
+        - name: appsettings
+          mountPath: "/app/appsettings.json"
+          readOnly: true        
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Always
+      
+      # 声明挂载的volume，类型为configMap对象
+      volumes:
+      - name: appsettings
+        configMap:
+          name: api-configs
+
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: user-api
+  namespace: netcore
+spec:
+  type: NodePort
+  ports:
+    - port: 10000
+      targetPort: 80
+  selector:
+    name: user-api
+
+---
+
+# 创建ConfigMap对象，会存储在k8s的etcd数据库中
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-configs
+  namespace: netcore
+data:
+  appsettings: | 
+  {
+  "Logging": {
+    "LogLevel": {
+      "Default": "Warning"
+    }
+  },
+  "AllowedHosts": "www.neobai.com",
+  "QQ": {
+    "AppId": "5434454",
+    "AppSecret": "sfsdmkwe"
+  }
+  }
+
